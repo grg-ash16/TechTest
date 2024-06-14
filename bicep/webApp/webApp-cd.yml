@@ -1,0 +1,75 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  name: 'default'
+
+
+jobs:
+- deployment: DeployWebAppDevelopment
+  displayName: Create new web app in development resource group
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'dev'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+          # No need to explicitly pass the connection details.
+        - task: AzureResourceManagerTemplateDeployment@3
+          name: deploy_bicep_file
+          inputs:
+            deploymentMode: 'Incremental'
+            connectedServiceName: 'serviceConnectionName'
+            deploymentName: 'deploymentName'
+            location: northeurope
+            resourceGroupName: 'resourceGroupName'
+            csmFile: ../bicep/webApp/webApp.bicep
+            csmParametersFile: ./bicep/webApp/webApp.parameters.json
+
+- deployment: DeployWebAppQa
+  displayName: Create new web app in qa resource group
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'qa'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+          # No need to explicitly pass the connection details.
+        - task: AzureResourceManagerTemplateDeployment@3
+          name: deploy_bicep_file
+          inputs:
+            deploymentMode: 'Incremental'
+            connectedServiceName: 'serviceConnectionName'
+            deploymentName: 'deploymentName'
+            location: northeurope
+            resourceGroupName: 'resourceGroupName'
+            csmFile: ../bicep/webApp/webApp.bicep
+            csmParametersFile: ./bicep/webApp/webApp.parameters.json
+
+- deployment: DeployWebAppProd
+  displayName: Create new web app in prod resource group
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'prod'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+          # No need to explicitly pass the connection details.
+        - task: AzureResourceManagerTemplateDeployment@3
+          name: deploy_bicep_file
+          inputs:
+            deploymentMode: 'Incremental'
+            connectedServiceName: 'serviceConnectionName'
+            deploymentName: 'deploymentName'
+            location: northeurope
+            resourceGroupName: 'resourceGroupName'
+            csmFile: ../bicep/webApp/webApp.bicep
+            csmParametersFile: ./bicep/webApp/webApp.parameters.json

@@ -1,0 +1,35 @@
+trigger:
+- main
+
+pool:
+  name: 'default'
+
+variables:
+  buildConfiguration: 'TechTest'
+
+steps:
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: 'cbae359a-f3a0-4f0e-9dad-52828c2d92af/2de28b48-7b0f-4d16-b5b9-f33ca2ce2679'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'TechTest'

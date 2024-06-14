@@ -1,0 +1,75 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  name: 'default'
+
+
+jobs:
+- deployment: DeployServiceBusDevelopment
+  displayName: Create new service bus in development resource group
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'dev'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+          # No need to explicitly pass the connection details.
+        - task: AzureResourceManagerTemplateDeployment@3
+          name: deploy_bicep_file
+          inputs:
+            deploymentMode: 'Incremental'
+            connectedServiceName: 'serviceConnectionName'
+            deploymentName: 'deploymentName'
+            location: northeurope
+            resourceGroupName: 'resourceGroupName'
+            csmFile: ../bicep/serviceBus/serviceBus.bicep
+            csmParametersFile: ./bicep/serviceBus/serviceBus.parameters.json
+
+- deployment: DeployServiceBusQa
+  displayName: Create new service bus in qa resource group
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'qa'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+          # No need to explicitly pass the connection details.
+        - task: AzureResourceManagerTemplateDeployment@3
+          name: deploy_bicep_file
+          inputs:
+            deploymentMode: 'Incremental'
+            connectedServiceName: 'serviceConnectionName'
+            deploymentName: 'deploymentName'
+            location: northeurope
+            resourceGroupName: 'resourceGroupName'
+            csmFile: ../bicep/serviceBus/serviceBus.bicep
+            csmParametersFile: ./bicep/serviceBus/serviceBus.parameters.json
+
+- deployment: DeployServiceBusProd
+  displayName: Create new service bus in prod resource group
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'prod'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+          # No need to explicitly pass the connection details.
+        - task: AzureResourceManagerTemplateDeployment@3
+          name: deploy_bicep_file
+          inputs:
+            deploymentMode: 'Incremental'
+            connectedServiceName: 'serviceConnectionName'
+            deploymentName: 'deploymentName'
+            location: northeurope
+            resourceGroupName: 'resourceGroupName'
+            csmFile: ../bicep/serviceBus/serviceBus.bicep
+            csmParametersFile: ./bicep/serviceBus/serviceBus.parameters.json

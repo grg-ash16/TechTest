@@ -1,0 +1,54 @@
+trigger:
+- main
+
+pool:
+  name: 'default'
+
+jobs:
+- deployment: DeployWebDev
+  displayName: Deploy artifacts to development web app
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'dev'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureWebApp@1
+          inputs:
+            azureSubscription: 'inflo-tech-test-serviceConnection>'
+            appType: 'webApp'
+            appName: 'inflo-web-apps-rg'
+            package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
+- deployment: DeployWebQa
+  displayName: Deploy artifacts to qa web app
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'qa'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureWebApp@1
+          inputs:
+            azureSubscription: 'inflo-tech-test-serviceConnection>'
+            appType: 'webApp'
+            appName: 'inflo-web-apps-rg'
+            package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+
+- deployment: DeployWebProd
+  displayName: Deploy artifacts to production web app
+  pool:
+    vmImage: ubuntu-latest
+  environment: 'prod'
+  strategy: 
+    runOnce:
+      deploy:
+        steps:
+        - task: AzureWebApp@1
+          inputs:
+            azureSubscription: 'inflo-tech-test-serviceConnection>'
+            appType: 'webApp'
+            appName: 'inflo-web-apps-rg'
+            package: '$(System.DefaultWorkingDirectory)/**/*.zip'
